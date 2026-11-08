@@ -1,30 +1,31 @@
-# Domain Search Browser
+# Eyooler
 
-A small desktop app for searching publicly indexed pages on a domain you own or are authorized to assess. It builds a domain-scoped Google query and opens it in your default web browser. It does not retrieve or store search results itself.
+Eyooler is a Flask-based OSINT search tool for finding relevant information on public web pages. Enter a target or topic, add an optional condition, and optionally limit the search to a website.
+
+## Features
+
+- Search by keyword, company, person, or topic.
+- Add an optional condition, such as `phone number`.
+- Optionally limit results to a domain.
+- Choose Google, Bing, or DuckDuckGo.
+- View filtered public results and open the search directly with the selected provider.
+- Fall back to DuckDuckGo when the selected provider does not return readable results.
+
+Search providers may limit automated access, so results and availability can vary.
 
 ## Requirements
 
 - Python 3.10 or newer
-- Tkinter, which is included with most standard Python installations
-- An internet connection and a web browser
-
-The app uses only Python's standard library; no third-party packages are needed to run `hi.py`.
+- An internet connection
 
 ## Run on Windows
 
-Open PowerShell in this folder and run:
+Clone the repository, then run these commands in PowerShell:
 
 ```powershell
-py osint.py
-```
-
-If the `py` command is unavailable, run `python osint.py` instead.
-
-## Use
-
-1. Enter a domain, such as `example.com`.
-2. Enter ordinary words to search for and, optionally, an exact phrase.
-3. Confirm that you are authorized to assess the domain.
-4. Select **Search Google** to open the query in a new browser tab.
-
-Searches are restricted to the supplied domain. Use this tool only for domains you own or have permission to assess.
+git clone https://github.com/NCRashidAlkaabi106/Eyooler.git
+cd Eyooler
+cd "all projects"
+py -m venv .venv
+python.exe -m pip install -r requirements.txt
+python.exe osint.py
