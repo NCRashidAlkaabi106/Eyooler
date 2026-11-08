@@ -15,10 +15,10 @@ The app uses only Python's standard library; no third-party packages are needed 
 Open PowerShell in this folder and run:
 
 ```powershell
-py hi.py
+py osint.py
 ```
 
-If the `py` command is unavailable, run `python hi.py` instead.
+If the `py` command is unavailable, run `python osint.py` instead.
 
 ## Use
 
