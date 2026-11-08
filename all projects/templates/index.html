@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Eyooler — OSINT Search</title>
+	<style>
+		:root {
+			color-scheme: dark;
+			font-family: "Segoe UI", sans-serif;
+			background: #171b1c;
+			color: #f3f0e8;
+		}
+		* { box-sizing: border-box; }
+		body { margin: 0; }
+		header, main { width: min(820px, calc(100% - 40px)); margin: auto; }
+		header { padding: 26px 0 12px; color: #9bd4bd; font-size: 13px; font-weight: 700; }
+		main { padding: 30px 0 60px; }
+		h1 { margin: 0 0 8px; font: 40px Georgia, serif; }
+		.intro, .hint, .footnote { color: #a4b0ad; line-height: 1.55; }
+		.intro { margin: 0 0 28px; }
+		label { display: block; margin-bottom: 8px; color: #a4b0ad; font-size: 12px; font-weight: 700; }
+		.search-row { display: flex; gap: 10px; }
+		input[type="search"], select {
+			flex: 1; min-width: 0; border: 1px solid #465051; border-radius: 8px;
+			background: #222829; color: #f3f0e8; padding: 14px; font-size: 16px;
+		}
+		select { flex: 0 0 190px; }
+		.field { margin-bottom: 18px; }
+		.field input { width: 100%; }
+		button {
+			border: 0; border-radius: 8px; background: #f08a62; color: #201916;
+			padding: 0 20px; font-weight: 700; cursor: pointer;
+		}
+		button:hover { background: #ffab84; }
+		.hint { margin: 10px 0 22px; font-size: 13px; }
+		.query, .notice, .result { border-radius: 8px; background: #222829; padding: 16px; }
+		.query { margin: 20px 0; overflow-wrap: anywhere; }
+		.query-label { margin-bottom: 8px; color: #9bd4bd; font-size: 11px; font-weight: 700; }
+		code { color: #f3f0e8; font: 14px Consolas, monospace; }
+		.provider-link { display: inline-block; margin-top: 12px; color: #9bd4bd; font-weight: 700; }
+		.provider-link:hover { color: #f3f0e8; }
+		.notice { margin: 20px 0; color: #ffd2bf; }
+		.results-heading { margin: 28px 0 12px; font-size: 20px; }
+		.result { margin: 12px 0; }
+		.result a { color: #9bd4bd; font-size: 18px; text-decoration: none; }
+		.result a:hover { text-decoration: underline; }
+		.result-url { margin: 6px 0; color: #a4b0ad; font-size: 12px; overflow-wrap: anywhere; }
+		.result p { margin: 8px 0 0; line-height: 1.5; }
+		.footnote { margin-top: 30px; font-size: 12px; }
+		@media (max-width: 560px) {
+			.search-row { flex-direction: column; }
+			select { flex: auto; }
+			button { padding: 13px; }
+			h1 { font-size: 34px; }
+		}
+	</style>
+</head>
+<body>
+	<header>EYOOLER</header>
+	<main>
+		<h1>Search with intent.</h1>
+		<p class="intro">Find relevant results from publicly available sources.</p>
+		<form action="{{ url_for('search') }}" method="post">
+			<div class="field">
+				<label for="target">TARGET KEYWORD, COMPANY, OR TOPIC</label>
+				<input id="target" name="target" type="search" value="{{ target|default('') }}"
+					placeholder="e.g. Turkish Airlines" required autofocus>
+			</div>
+			<div class="field">
+				<label for="condition">OPTIONAL CONDITION</label>
+				<input id="condition" name="condition" type="search" value="{{ condition|default('') }}"
+					placeholder="e.g. phone number">
+			</div>
+			<div class="field">
+				<label for="domain">OPTIONAL SITE LIMIT</label>
+				<input id="domain" name="domain" type="search" value="{{ domain|default('') }}"
+					placeholder="e.g. example.com">
+			</div>
+			<div class="search-row">
+				<select name="provider" aria-label="Search engine">
+					{% for provider_id, provider in providers.items() %}
+						<option value="{{ provider_id }}" {% if selected_provider == provider_id %}selected{% endif %}>
+							{{ provider.name }}
+						</option>
+					{% endfor %}
+				</select>
+				<button type="submit">Search</button>
+			</div>
+		</form>
+		<p class="hint">
+			The target appears first in the search, followed by any condition and optional site limit.
+			Searches use publicly available pages only.
+		</p>
+
+		{% if search_query %}
+			<section class="query" aria-label="Search query">
+				<div class="query-label">QUERY SENT TO {{ provider_name|upper }}</div>
+				<code>{{ search_query }}</code>
+				{% if search_url %}
+					<p><a class="provider-link" href="{{ search_url }}" target="_blank" rel="noopener noreferrer">Open in selected search engine</a></p>
+				{% endif %}
+			</section>
+		{% endif %}
+
+		{% if error %}
+			<div class="notice" role="alert">{{ error }}</div>
+		{% endif %}
+
+		{% if results %}
+			<h2 class="results-heading">Search results</h2>
+			{% for result in results %}
+				<article class="result">
+					<a href="{{ result.url }}" target="_blank" rel="noopener noreferrer">{{ result.title }}</a>
+					<div class="result-url">{{ result.url }}</div>
+					{% if result.snippet %}<p>{{ result.snippet }}</p>{% endif %}
+				</article>
+			{% endfor %}
+		{% endif %}
+
+		<p class="footnote">
+			Eyooler searches publicly indexed pages. Availability and result layouts depend on the
+			selected search engine.
+		</p>
+	</main>
+</body>
+</html>
